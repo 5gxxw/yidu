@@ -1,0 +1,68 @@
+{extend name="base/common" /}
+{block name="style"}
+<link href="__ROOT__/static/lib/icheck/icheck.css" rel="stylesheet" type="text/css" />
+{/block}
+{block name="title"}添加导航{/block}
+{block name="content"}
+<div class="pd-20">
+    <form method="post" class="form form-horizontal" id="form-user-add">
+        <div class="row cl">
+            <label class="form-label col-2"><span class="c-red">*</span>导航名称：</label>
+            <div class="formControls col-5">
+                <input type="text" class="input-text" value="" placeholder="" id="user-name" name="name">
+            </div>
+            <div class="col-5"> </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-2">url：</label>
+            <div class="formControls col-5">
+                <textarea name="url" cols="" rows="" class="textarea"  placeholder="说点什么...最少输入10个字符" datatype="*10-100" dragonfly="true" nullmsg="备注不能为空！" onKeyUp="textarealength(this,100)"></textarea>
+                <p class="textarea-numberbar"><em class="textarea-length">0</em>/100</p>
+            </div>
+            <div class="col-5"> </div>
+        </div>
+        <div class="row cl">
+            <div class="col-9 col-offset-2">
+                <input type="hidden" name="parent_id" value="{$parent_id|default=0}">
+                <input class="btn btn-primary radius ajax-post" type="button" value="&nbsp;&nbsp;提交&nbsp;&nbsp;">
+            </div>
+        </div>
+    </form>
+</div>
+{/block}
+
+{block name="script"}
+<script type="text/javascript">
+    $(function(){
+        $('.skin-minimal input').iCheck({
+            checkboxClass: 'icheckbox-blue',
+            radioClass: 'iradio-blue',
+            increaseArea: '20%'
+        });
+
+        $("#form-user-add").Validform({
+            tiptype:2,
+            callback:function(form){
+                form[0].submit();
+                var index = parent.layer.getFrameIndex(window.name);
+                parent.$('.btn-refresh').click();
+                parent.layer.close(index);
+            }
+        });
+
+        $(".ajax-post").click(function () {
+            //1.收集表单信息
+            var formData = $(".form").serialize();
+            $.ajax({
+                'type' : 'POST',
+                'url' : "{:url('index/Nav/add')}",
+                'data' : formData,
+                'success' : function (data) {
+
+                },
+                'error' : ''
+            })
+        });
+    });
+</script>
+{/block}

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>后台管理登录界面</title>
+    <style>
+        * {margin:0;padding:0;}
+        body {background:#fff;}
+        .frame {width: 320px;height: 280px;position: absolute;top: 50%;left: 50%;opacity: 0.8;
+            margin-left: -200px;margin-top: -140px;z-index: 1000;padding: 0 40px;}
+        .frame .item {padding: 3px 10px 3px 12px;margin-bottom: 10px;background: #0e0e0e;border-radius: 10px;border: 1px solid #0e0e0e;}
+        .frame .item i {display: inline-block;margin-right: 6px;width: 24px;
+            height: 24px;vertical-align: middle;background: url(__ROOT__/static/images/icon24_login.png) no-repeat;}
+        .frame .item .user {background-position: 0 0;}
+        .frame .item .password {background-position: -48px 0;}
+        .frame .item .verify {background-position: -24px 0;}
+        .frame .item input {padding: 8px 0;
+            width: 220px;
+            height: 22px;
+            line-height: 22px;
+            font-size: 16px;
+            font-family: "微软雅黑", arial, sans-serif;
+            vertical-align: middle;
+            border: 0 none;
+            outline: 0;
+            resize: none;
+            background: #0e0e0e;
+            color: #fff;
+        }
+        .shadow {border:1px solid #fff !important;transition: all 0.5s ease-in;
+            -webkit-box-shadow:inset 0 0 5px #fff;
+            -moz-box-shadow:inset 0 0 5px #fff;
+            box-shadow:inset 0 0 5px #fff;}
+        .frame button {height: 45px;background: #204d74;border: none;width: 100%;color: #fff;font-size:20px;cursor: pointer;border-radius: 10px;}
+        .frame button:hover {background: #0480be;}
+    </style>
+</head>
+<body>
+<div class="frame">
+    <div class="item">
+        <i class="user"></i>
+        <input type="text" placeholder='填写用户名' name="username">
+    </div>
+    <div class="item">
+        <i class="password"></i>
+        <input type="password" placeholder='填写密码' name="password">
+    </div>
+    <div class="item">
+        <i class="verify"></i>
+        <input type="text" placeholder='填写验证码' name="verify">
+    </div>
+    <div id="vcode" style="margin-bottom: 10px;"><img src="{:captcha_src()}" alt="captcha" style="border-radius: 10px;"/></div>
+    <button id="button">登 录</button>
+</div>
+<canvas id="canvas" style="position:absolute; top:0; left:0;"></canvas>
+<div id="buffer" style="display:none;"></div>
+<script src="__ROOT__/static/js/font_change.js"></script>
+<script src="__ROOT__/static/js/jquery-2.0.3.min.js"></script>
+<script>
+    $('.item').find('input').focus(function(){
+        $(this).parent().addClass('shadow');
+    });
+    $('.item').find('input').blur(function(){
+        $(this).parent().removeClass('shadow');
+    });
+    $("#vcode img").click(function(){
+        $(this).attr("src",$(this).attr("src")+"?"+Math.random());
+    });
+    $('#button').on('click',function(){
+        var data = {};
+        $('input').each(function(){
+            data[$(this).attr('name')] = $(this).val();
+        });
+        $.post("{:url('index/login/ajax_login')}",{data:data},function(msg){
+            if(msg.status == 0){
+                alert(msg.message);
+                $("#vcode img").click();
+            }else{
+                alert(msg.message);
+                window.location.reload();
+            }
+        },'json')
+    });
+</script>
+</body>
+</html>

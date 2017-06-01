@@ -1,0 +1,83 @@
+{extend name="base/common" /}
+{block name="style"}
+<link href="__ROOT__/static/css/style.css" rel="stylesheet" type="text/css" />
+<link rel="stylesheet" href="__ROOT__/static/lib/zTree/v3/css/zTreeStyle/zTreeStyle.css" type="text/css">
+{/block}
+
+{block name="title"}导航列表{/block}
+
+{block name="content"}
+<nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 产品管理 <span class="c-gray en">&gt;</span> 产品分类 <a class="btn btn-success radius r mr-20" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a></nav>
+<table class="table">
+    <tr>
+        <td width="200" class="va-t"><ul id="treeDemo" class="ztree"></ul></td>
+        <td class="va-t"><IFRAME ID="testIframe" Name="testIframe" FRAMEBORDER=0 SCROLLING=AUTO width=100%  height=390px SRC="{:url('add')}"></IFRAME></td>
+    </tr>
+</table>
+{/block}
+
+{block name="script"}
+<script type="text/javascript" src="__ROOT__/static/lib/zTree/v3/js/jquery.ztree.all-3.5.min.js"></script>
+<script type="text/javascript">
+    var setting = {
+        view: {
+            dblClickExpand: false,//双击节点时，是否自动展开父节点的标识
+            showLine: false,//设置 zTree 是否显示节点之间的连线。
+            selectedMulti: false//设置是否允许同时选中多个节点。
+        },
+        data: {
+            simpleData: {
+                enable:true,//确定 zTree 初始化时的节点数据、异步加载时的节点数据、或 addNodes 方法中输入的 newNodes 数据是否采用简单数据模式 (Array)
+                idKey: "id",//节点数据中保存唯一标识的属性名称。
+                pIdKey: "parent_id",
+                rootPId: 0
+            }
+        },
+        callback: {
+            //用于捕获单击节点之前的事件回调函数，并且根据返回值确定是否允许单击操作
+            onClick: function(event,treeId, treeNode) {
+                //根据 treeId 获取 zTree 对象的方法
+                var zTree = $.fn.zTree.getZTreeObj(treeId);
+                //判断 treeNode 节点是否为父节点。
+                $("#goodscategory-parent_id").val(treeNode.id);
+
+
+                /*if (treeNode.isParent) {
+                    //展开 / 折叠 指定的节点
+                    zTree.expandNode(treeNode);
+                } else {
+                    var id = treeNode.id;
+                    //var src = '/index/Nav/add?id='+id;
+                    //demoIframe.attr("src",src);
+
+                }*/
+            }
+        }
+    };
+
+    var zNodes = {$model};
+
+    var code;
+
+    function showCode(str) {
+        if (!code) code = $("#code");
+        code.empty();
+        code.append("<li>"+str+"</li>");
+    }
+
+    $(document).ready(function(){
+     var t = $("#treeDemo");
+     //zTree 初始化方法，创建 zTree 必须使用此方法
+     zTreeObj = $.fn.zTree.init(t, setting, zNodes);
+     zTreeObj.expandAll(true);//展开所有节点
+     demoIframe = $("#testIframe");
+     //demoIframe.bind("load", loadReady);
+     //获取 zTree 对象的方法
+     var zTree = $.fn.zTree.getZTreeObj(treeId);
+     //默认选中一个节点
+     zTree.selectNode(zTree.getNodeByParam("id",0,null));
+     });
+
+
+</script>
+{/block}
